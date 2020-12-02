@@ -19,26 +19,43 @@ class VideoPresenter {
     
     func loadData() {
         currentVideo = LastVideo.loadLast()
-    }
-    
-    @objc func saveData() {
+        if currentVideo != nil {
         guard let videoURL = currentVideo?.videoURL else {return}
         guard let currentTime = currentVideo?.currentTime else {return}
+        guard let playerView = playerView else {return}
+        playerView.createController(videoURL: videoURL, currentTime: currentTime)
+        setUpMainView()
+        }
+    }
+    
+    func saveData() {
+        guard let videoURL = currentVideo?.videoURL else {return}
+        guard let playerView = playerView else {return}
+        let currentTimeInCMTime = playerView.player.currentTime()
+        let currentTime = Float(currentTimeInCMTime.seconds)
         LastVideo.saveLast(videoURL: videoURL, currentTime: currentTime)
     }
     
     func videoWasPicked(videoURL: URL) {
         guard let playerView = playerView else {return}
         playerView.createController(videoURL: videoURL)
+        currentVideo = LastVideo(videoURL: videoURL, currentTime: 0)
+        saveData()
+        setUpMainView()
+    }
+    
+    func setUpMainView() {
+        guard let playerView = playerView else {return}
         guard let seconds = playerView.seconds else {return}
         guard let current = playerView.currentSeconds else {return}
         guard let maxSeconds = playerView.seconds else {return}
         guard let mainView = mainView else {return}
-        currentVideo = LastVideo(videoURL: videoURL, currentTime: 0)
         isVideoLoaded = true
         let duration = stringFromTimeInterval(interval: seconds)
         let currentTime = stringFromTimeInterval(interval: current)
         let maxValue = Float(maxSeconds)
+        mainView.setUpMyForwardView()
+        mainView.setUpMyBackwardView()
         mainView.setupSliderAndLabels(duration: duration, current: currentTime, maxValue: maxValue)
     }
     

@@ -36,8 +36,10 @@ class PlayerView: UIView {
     }
     // конец блока от Apple
     
-    func createController(videoURL: URL) {
-        player = AVPlayer(url: videoURL)
+    func createController(videoURL: URL, currentTime: Float = 0) {
+        let video = AVPlayerItem(url: videoURL)
+        player = AVPlayer(playerItem: video)
+        player.seek(to: CMTime(seconds: Double(currentTime), preferredTimescale: 1))
         setupTimings()
     }
     

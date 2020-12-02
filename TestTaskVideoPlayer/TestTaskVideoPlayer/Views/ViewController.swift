@@ -33,7 +33,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        videoPresenter.loadData()
+        
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addVideo))
         playButton.contentMode = .scaleAspectFill
@@ -58,7 +58,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
 
         
         let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(videoPresenter.saveData), name: UIApplication.willResignActiveNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(saveData), name: UIApplication.willResignActiveNotification, object: nil)
+        
+        videoPresenter.loadData()
+    }
+    
+    @objc func saveData() {
+        videoPresenter.saveData()
     }
     
     @objc func addVideo() {
@@ -75,8 +81,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             return
         }
         videoPresenter.videoWasPicked(videoURL: video)
-        setUpMyForwardView()
-        setUpMyBackwardView()
         dismiss(animated: true)
     }
     
