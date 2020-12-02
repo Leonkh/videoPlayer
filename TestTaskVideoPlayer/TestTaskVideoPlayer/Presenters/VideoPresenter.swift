@@ -20,11 +20,11 @@ class VideoPresenter {
     func loadData() {
         currentVideo = LastVideo.loadLast()
         if currentVideo != nil {
-        guard let videoURL = currentVideo?.videoURL else {return}
-        guard let currentTime = currentVideo?.currentTime else {return}
-        guard let playerView = playerView else {return}
-        playerView.createController(videoURL: videoURL, currentTime: currentTime)
-        setUpMainView()
+            guard let videoURL = currentVideo?.videoURL else {return}
+            guard let currentTime = currentVideo?.currentTime else {return}
+            guard let playerView = playerView else {return}
+            playerView.createController(videoURL: videoURL, currentTime: currentTime)
+            setUpMainView()
         }
     }
     
@@ -56,7 +56,8 @@ class VideoPresenter {
         let maxValue = Float(maxSeconds)
         mainView.setUpMyForwardView()
         mainView.setUpMyBackwardView()
-        mainView.setupSliderAndLabels(duration: duration, current: currentTime, maxValue: maxValue)
+        mainView.setupSliderAndLabels(duration: duration, current: currentTime, maxValue: maxValue, seconds: Float(current))
+        addObserver()
     }
     
     
@@ -70,28 +71,32 @@ class VideoPresenter {
     func playButtonTapped() {
         guard let mainView = mainView else {return}
         guard let playerView = playerView else {return}
-        if isVideoLoaded == false {
-            mainView.alertNoVideo()
-            return
-        }
-        isVideoPlaying = !isVideoPlaying
-        mainView.changeImagePlayButton(status: isVideoPlaying)
-        if isVideoPlaying {
-            playerView.play()
-        } else {
-            playerView.pause()
+        if checkIsVideoLoaded() {
+            isVideoPlaying = !isVideoPlaying
+            mainView.changeImagePlayButton(status: isVideoPlaying)
+            if isVideoPlaying {
+                playerView.play()
+            } else {
+                playerView.pause()
+            }
         }
     }
-    func stopButtonTapped() {
-        guard let mainView = mainView else {return}
-        guard let playerView = playerView else {return}
+    func checkIsVideoLoaded() -> Bool {
+        guard let mainView = mainView else {return false}
         if isVideoLoaded == false {
             mainView.alertNoVideo()
-            return
+            return false
         }
-        isVideoPlaying = false
-        mainView.changeImagePlayButton(status: isVideoPlaying)
-        playerView.stop()
+        return true
+    }
+    func stopButtonTapped() {
+        if checkIsVideoLoaded() {
+            guard let mainView = mainView else {return}
+            guard let playerView = playerView else {return}
+            isVideoPlaying = false
+            mainView.changeImagePlayButton(status: isVideoPlaying)
+            playerView.stop()
+        }
     }
     
     func forwardViewTapped() {
@@ -105,7 +110,22 @@ class VideoPresenter {
     
     func sliderValueChanged(sliderValue: Float) {
         guard let playerView = playerView else {return}
-        let seconds: Int64 = Int64(sliderValue)
+        let seconds = Int64(sliderValue)
         playerView.changeCurrentTime(seconds: seconds)
+    }
+    
+    func addObserver() {
+        guard let playerView = playerView else {return}
+                guard let mainView = mainView else {return}
+        let cmTime = playerView.CMTimeForObserver()
+        playerView.player.addPeriodicTimeObserver(forInterval: cmTime, queue: DispatchQueue.main) { (CMTime) -> Void in
+            if playerView.player.currentItem?.status == .readyToPlay {
+                playerView.time = playerView.CMTimeGetSeconds()
+                if let time = self.playerView?.time {
+                    mainView.playbackSlider.value = Float ( time )
+                    mainView.labelCurrentTime.text = self.stringFromTimeInterval(interval: time)
+                }
+            }
+        }
     }
 }

@@ -18,24 +18,17 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var playbackSlider: UISlider!
     @IBOutlet var labelOverallDuration: UILabel!
     
-    
-    
     var myPlayerView: PlayerView!
     var forwardView: UIView!
     var backwardView: UIView!
+    
     private let videoPresenter = VideoPresenter()
-    
-    var isVideoPlaying = false
-    var isVideoLoaded = false
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addVideo))
+        
         playButton.contentMode = .scaleAspectFill
         playButton.setBackgroundImage(UIImage(named: "play"), for: .normal)
         playButton.setTitle(nil, for: .normal)
@@ -55,7 +48,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         setUpMyPlayerView()
         videoPresenter.playerView = myPlayerView
         videoPresenter.mainView = self
-
+        
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(saveData), name: UIApplication.willResignActiveNotification, object: nil)
@@ -154,7 +147,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         backwardView.addGestureRecognizer(tripleTap)
     }
     
-    func setupSliderAndLabels (duration: String, current: String, maxValue: Float) {
+    func setupSliderAndLabels (duration: String, current: String, maxValue: Float, seconds: Float) {
         
         labelCurrentTime.isHidden = false
         labelOverallDuration.isHidden = false
@@ -165,14 +158,9 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         playbackSlider.maximumValue = maxValue
         playbackSlider.isContinuous = true
+        playbackSlider.value = seconds
         
-        //        myPlayerView.player!.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: DispatchQueue.main) { (CMTime) -> Void in
-        //            if self.myPlayerView.player!.currentItem?.status == .readyToPlay {
-        //                self.myPlayerView.time = CMTimeGetSeconds(self.myPlayerView.player!.currentTime())
-        //                self.playbackSlider.value = Float ( self.myPlayerView.time! )
-        //                self.labelCurrentTime.text = self.stringFromTimeInterval(interval: self.myPlayerView.time!)
-        //            }
-        //        }
+  
     }
     
     @objc func playbackSliderValueChanged(_ playbackSlider:UISlider) {

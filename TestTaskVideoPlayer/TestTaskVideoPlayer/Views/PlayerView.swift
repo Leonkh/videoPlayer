@@ -43,6 +43,13 @@ class PlayerView: UIView {
         setupTimings()
     }
     
+    func CMTimeForObserver() -> CMTime {
+        return CMTimeMakeWithSeconds(1, preferredTimescale: 1)
+    }
+    func CMTimeGetSeconds() -> Float64 {
+        return CoreMedia.CMTimeGetSeconds(player.currentTime())
+    }
+    
     func play() {
         player.play()
     }
@@ -80,9 +87,9 @@ class PlayerView: UIView {
     func setupTimings() {
         guard let playerItem = player.currentItem else {return}
         let duration = playerItem.asset.duration
-        seconds = CMTimeGetSeconds(duration)
+        seconds = CoreMedia.CMTimeGetSeconds(duration)
         
         let currentDuration = playerItem.currentTime()
-        currentSeconds = CMTimeGetSeconds(currentDuration)
+        currentSeconds = CoreMedia.CMTimeGetSeconds(currentDuration)
     }
 }
