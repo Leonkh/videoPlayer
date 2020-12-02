@@ -55,8 +55,7 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         setUpMyPlayerView()
         videoPresenter.playerView = myPlayerView
         videoPresenter.mainView = self
-        setUpMyForwardView()
-        setUpMyBackwardView()
+
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(videoPresenter.saveData), name: UIApplication.willResignActiveNotification, object: nil)
@@ -76,6 +75,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             return
         }
         videoPresenter.videoWasPicked(videoURL: video)
+        setUpMyForwardView()
+        setUpMyBackwardView()
         dismiss(animated: true)
     }
     

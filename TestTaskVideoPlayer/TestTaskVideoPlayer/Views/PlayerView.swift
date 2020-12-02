@@ -55,19 +55,19 @@ class PlayerView: UIView {
     }
     
     func forwardByDoubleTouch() {
-        player.seek(to: (player?.currentTime())! + CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) + CMTime(seconds: 10, preferredTimescale: 1))
     }
     
     func forwardByTripleTouch() {
-        player.seek(to: (player?.currentTime())! + CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) + CMTime(seconds: 20, preferredTimescale: 1))
     }
     
     func backwardByDoubleTouch() {
-        player.seek(to: (player?.currentTime())! - CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) - CMTime(seconds: 10, preferredTimescale: 1))
     }
     
     func backwardByTripleTouch() {
-        player.seek(to: (player?.currentTime())! - CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) - CMTime(seconds: 20, preferredTimescale: 1))
     }
     
     func changeCurrentTime(seconds: Int64) {
@@ -77,10 +77,10 @@ class PlayerView: UIView {
     
     func setupTimings() {
         guard let playerItem = player.currentItem else {return}
-        duration = playerItem.asset.duration
-        seconds = CMTimeGetSeconds(duration!)
+        let duration = playerItem.asset.duration
+        seconds = CMTimeGetSeconds(duration)
         
-        currentDuration = playerItem.currentTime()
-        currentSeconds = CMTimeGetSeconds(currentDuration!)
+        let currentDuration = playerItem.currentTime()
+        currentSeconds = CMTimeGetSeconds(currentDuration)
     }
 }
