@@ -36,11 +36,8 @@ class PlayerView: UIView {
     }
     // конец блока от Apple
     
-    
-    
     func createController(videoURL: URL) {
         player = AVPlayer(url: videoURL)
-//        print("Контроллер создан")
         setupTimings()
     }
     
@@ -65,8 +62,6 @@ class PlayerView: UIView {
         player?.seek(to: (player?.currentTime())! + CMTime(seconds: 20, preferredTimescale: 1))
     }
     
-    
-    
     func backwardByDoubleTouch() {
         player?.seek(to: (player?.currentTime())! - CMTime(seconds: 10, preferredTimescale: 1))
     }
@@ -75,18 +70,12 @@ class PlayerView: UIView {
         player?.seek(to: (player?.currentTime())! - CMTime(seconds: 20, preferredTimescale: 1))
     }
     
-    
-    
     func setupTimings() {
         guard let playerItem = player.currentItem else {return}
         duration = playerItem.asset.duration
-//        print("Длительность равна \(duration)")
         seconds = CMTimeGetSeconds(duration!)
-//        print("Секунды равны \(seconds)")
-        
         
         currentDuration = playerItem.currentTime()
         currentSeconds = CMTimeGetSeconds(currentDuration!)
-        
     }
 }

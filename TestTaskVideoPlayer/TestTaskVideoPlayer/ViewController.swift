@@ -66,8 +66,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(saveChanges), name: UIApplication.willResignActiveNotification, object: nil)
-        
-        
     }
     
     @objc func addVideo() {
@@ -118,16 +116,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     @objc func forwardViewTapped() {
-        //        print("Двойное нажатие вперёд зафиксировано")
         myPlayerView.forwardByDoubleTouch()
     }
     
     @objc func backwardViewTapped() {
-        //        print("Двойное нажатие назад зафиксировано")
         myPlayerView.backwardByDoubleTouch()
     }
-    
-    
     
     func setUpMyPlayerView() {
         myPlayerView = PlayerView()
@@ -201,11 +195,8 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
                 self.playbackSlider.value = Float ( self.myPlayerView.time! )
                 self.labelCurrentTime.text = self.stringFromTimeInterval(interval: self.myPlayerView.time!)
             }
-            
         }
     }
-    
-    
     
     @objc func playbackSliderValueChanged(_ playbackSlider:UISlider) {
         let seconds : Int64 = Int64(playbackSlider.value)
@@ -221,12 +212,10 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
     
-//    override func viewWillDisappear(_ animated: Bool) {
-//        saveChanges()
-//    }
     override func viewWillAppear(_ animated: Bool) {
         guard let video = lastVideo.first else {return}
-        myPlayerView.createController(videoURL: video.value(forKeyPath: "videoURL") as! URL)
+        guard let urlV = video.value(forKeyPath: "videoURL") as? URL else {return}
+        myPlayerView.createController(videoURL: urlV)
         myPlayerView.player.seek(to: CMTime(seconds: Double(video.value(forKey: "currentTime") as! Float), preferredTimescale: 1))
         statusVideoHere = true
         setupSliderAndLabels()
@@ -234,12 +223,11 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     
     @objc func saveChanges() {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-       
+        
         let managedContext = appDelegate.persistentContainer.viewContext
         
         guard let entity = NSEntityDescription.entity(forEntityName: "Video", in: managedContext) else {return}
         if let object = lastVideo.first {
-        
             do {
                 managedContext.delete(object)
                 lastVideo.removeAll()
@@ -247,21 +235,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
             } catch let error as NSError {
                 print("Could not save. \(error), \(error.userInfo)")
             }
-        
         }
+        
         let video = NSManagedObject(entity: entity, insertInto: managedContext)
         video.setValue(videoURL, forKeyPath: "videoURL")
-        print(playbackSlider.value)
-        print(videoURL)
         video.setValue(playbackSlider.value, forKeyPath: "currentTime")
         do {
             lastVideo.append(video)
             try managedContext.save()
-            print("Всё сохранилось")
         } catch let error as NSError {
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
-    
-    
 }
