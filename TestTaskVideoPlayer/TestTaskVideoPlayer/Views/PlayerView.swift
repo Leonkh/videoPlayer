@@ -42,32 +42,37 @@ class PlayerView: UIView {
     }
     
     func play() {
-        player?.play()
+        player.play()
     }
     
     func pause() {
-        player?.pause()
+        player.pause()
     }
     
     func stop() {
-        player?.seek(to: CMTime(value: 0, timescale: 1))
+        player.seek(to: CMTime(value: 0, timescale: 1))
         pause()
     }
     
     func forwardByDoubleTouch() {
-        player?.seek(to: (player?.currentTime())! + CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player?.currentTime())! + CMTime(seconds: 10, preferredTimescale: 1))
     }
     
     func forwardByTripleTouch() {
-        player?.seek(to: (player?.currentTime())! + CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player?.currentTime())! + CMTime(seconds: 20, preferredTimescale: 1))
     }
     
     func backwardByDoubleTouch() {
-        player?.seek(to: (player?.currentTime())! - CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player?.currentTime())! - CMTime(seconds: 10, preferredTimescale: 1))
     }
     
     func backwardByTripleTouch() {
-        player?.seek(to: (player?.currentTime())! - CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player?.currentTime())! - CMTime(seconds: 20, preferredTimescale: 1))
+    }
+    
+    func changeCurrentTime(seconds: Int64) {
+        let targetTime: CMTime = CMTimeMake(value: seconds, timescale: 1)
+        player.seek(to: targetTime)
     }
     
     func setupTimings() {

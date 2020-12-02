@@ -6,12 +6,11 @@
 //
 import AVFoundation
 import AVKit
-import CoreData
 import UIKit
 
-private var lastVideo: [NSManagedObject] = []
-
 class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    
     @IBOutlet var playButton: UIButton!
     @IBOutlet var stopButton: UIButton!
     
@@ -19,31 +18,24 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var playbackSlider: UISlider!
     @IBOutlet var labelOverallDuration: UILabel!
     
-    var videoURL: URL!
+    
     
     var myPlayerView: PlayerView!
     var forwardView: UIView!
     var backwardView: UIView!
+    private let videoPresenter = VideoPresenter()
     
-    var statusPlay = false
-    var statusVideoHere = false
+    var isVideoPlaying = false
+    var isVideoLoaded = false
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        let managedContext =
-            appDelegate.persistentContainer.viewContext
-        let fetchRequest = NSFetchRequest<NSManagedObject>(entityName: "Video")
         
-        do {
-            lastVideo = try managedContext.fetch(fetchRequest)
-        } catch let error as NSError {
-            print("Could not fetch. \(error), \(error.userInfo)")
-        }
+        videoPresenter.loadData()
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addVideo))
-        
         playButton.contentMode = .scaleAspectFill
         playButton.setBackgroundImage(UIImage(named: "play"), for: .normal)
         playButton.setTitle(nil, for: .normal)
@@ -61,11 +53,13 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         
         // горизонтальный режим временно недоступен
         setUpMyPlayerView()
+        videoPresenter.playerView = myPlayerView
+        videoPresenter.mainView = self
         setUpMyForwardView()
         setUpMyBackwardView()
         
         let notificationCenter = NotificationCenter.default
-        notificationCenter.addObserver(self, selector: #selector(saveChanges), name: UIApplication.willResignActiveNotification, object: nil)
+        notificationCenter.addObserver(self, selector: #selector(videoPresenter.saveData), name: UIApplication.willResignActiveNotification, object: nil)
     }
     
     @objc func addVideo() {
@@ -77,50 +71,28 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        guard let video = info[.mediaURL] as? URL else {return}
-        videoURL = video
-        myPlayerView.createController(videoURL: videoURL)
-        saveChanges()
-        statusVideoHere = true
-        setupSliderAndLabels()
+        guard let video = info[.mediaURL] as? URL else {
+            dismiss(animated: true)
+            return
+        }
+        videoPresenter.videoWasPicked(videoURL: video)
         dismiss(animated: true)
     }
     
     @IBAction func playButtonTapped(_ sender: UIButton) {
+        videoPresenter.playButtonTapped()
         
-        if statusVideoHere == false {
-            let ac = UIAlertController(title: "First select the video", message: nil, preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
-            return
-        }
-        statusPlay = !statusPlay
-        if statusPlay {
-            playButton.setBackgroundImage(UIImage(named: "pause"), for: .normal)
-            myPlayerView.play()
-        } else {
-            playButton.setBackgroundImage(UIImage(named: "play"), for: .normal)
-            myPlayerView.pause()
-        }
     }
     @IBAction func stopButtonTapped(_ sender: UIButton) {
-        if statusVideoHere == false {
-            let ac = UIAlertController(title: "First select the video", message: nil, preferredStyle: .alert)
-            ac.addAction(UIAlertAction(title: "OK", style: .default))
-            present(ac, animated: true)
-            return
-        }
-        statusPlay = false
-        playButton.setBackgroundImage(UIImage(named: "play"), for: .normal)
-        myPlayerView.stop()
+        videoPresenter.stopButtonTapped()
     }
     
     @objc func forwardViewTapped() {
-        myPlayerView.forwardByDoubleTouch()
+        videoPresenter.forwardViewTapped()
     }
     
     @objc func backwardViewTapped() {
-        myPlayerView.backwardByDoubleTouch()
+        videoPresenter.backwardViewTapped()
     }
     
     func setUpMyPlayerView() {
@@ -177,74 +149,44 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         backwardView.addGestureRecognizer(tripleTap)
     }
     
-    func setupSliderAndLabels () {
+    func setupSliderAndLabels (duration: String, current: String, maxValue: Float) {
         
         labelCurrentTime.isHidden = false
         labelOverallDuration.isHidden = false
         playbackSlider.isHidden = false
         
-        labelOverallDuration.text = stringFromTimeInterval(interval: myPlayerView.seconds!)
-        labelCurrentTime.text = stringFromTimeInterval(interval: myPlayerView.currentSeconds!)
+        labelOverallDuration.text = duration
+        labelCurrentTime.text = current
         
-        playbackSlider.maximumValue = Float(myPlayerView.seconds!)
+        playbackSlider.maximumValue = maxValue
         playbackSlider.isContinuous = true
         
-        myPlayerView.player!.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: DispatchQueue.main) { (CMTime) -> Void in
-            if self.myPlayerView.player!.currentItem?.status == .readyToPlay {
-                self.myPlayerView.time = CMTimeGetSeconds(self.myPlayerView.player!.currentTime())
-                self.playbackSlider.value = Float ( self.myPlayerView.time! )
-                self.labelCurrentTime.text = self.stringFromTimeInterval(interval: self.myPlayerView.time!)
-            }
-        }
+        //        myPlayerView.player!.addPeriodicTimeObserver(forInterval: CMTimeMakeWithSeconds(1, preferredTimescale: 1), queue: DispatchQueue.main) { (CMTime) -> Void in
+        //            if self.myPlayerView.player!.currentItem?.status == .readyToPlay {
+        //                self.myPlayerView.time = CMTimeGetSeconds(self.myPlayerView.player!.currentTime())
+        //                self.playbackSlider.value = Float ( self.myPlayerView.time! )
+        //                self.labelCurrentTime.text = self.stringFromTimeInterval(interval: self.myPlayerView.time!)
+        //            }
+        //        }
     }
     
     @objc func playbackSliderValueChanged(_ playbackSlider:UISlider) {
-        let seconds : Int64 = Int64(playbackSlider.value)
-        let targetTime:CMTime = CMTimeMake(value: seconds, timescale: 1)
-        myPlayerView.player!.seek(to: targetTime)
+        let sliderValue = playbackSlider.value
+        videoPresenter.sliderValueChanged(sliderValue: sliderValue)
     }
     
-    func stringFromTimeInterval(interval: TimeInterval) -> String {
-        let interval = Int(interval)
-        let seconds = interval % 60
-        let minutes = (interval / 60) % 60
-        let hours = (interval / 3600)
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        guard let video = lastVideo.first else {return}
-        guard let urlV = video.value(forKeyPath: "videoURL") as? URL else {return}
-        myPlayerView.createController(videoURL: urlV)
-        myPlayerView.player.seek(to: CMTime(seconds: Double(video.value(forKey: "currentTime") as! Float), preferredTimescale: 1))
-        statusVideoHere = true
-        setupSliderAndLabels()
-    }
-    
-    @objc func saveChanges() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        
-        let managedContext = appDelegate.persistentContainer.viewContext
-        
-        guard let entity = NSEntityDescription.entity(forEntityName: "Video", in: managedContext) else {return}
-        if let object = lastVideo.first {
-            do {
-                managedContext.delete(object)
-                lastVideo.removeAll()
-                try managedContext.save()
-            } catch let error as NSError {
-                print("Could not save. \(error), \(error.userInfo)")
-            }
+    func changeImagePlayButton(status: Bool) {
+        switch status {
+        case true:
+            playButton.setBackgroundImage(UIImage(named: "pause"), for: .normal)
+        default:
+            playButton.setBackgroundImage(UIImage(named: "play"), for: .normal)
         }
-        
-        let video = NSManagedObject(entity: entity, insertInto: managedContext)
-        video.setValue(videoURL, forKeyPath: "videoURL")
-        video.setValue(playbackSlider.value, forKeyPath: "currentTime")
-        do {
-            lastVideo.append(video)
-            try managedContext.save()
-        } catch let error as NSError {
-            print("Could not save. \(error), \(error.userInfo)")
-        }
+    }
+    
+    func alertNoVideo() {
+        let ac = UIAlertController(title: "First select the video", message: nil, preferredStyle: .alert)
+        ac.addAction(UIAlertAction(title: "OK", style: .default))
+        present(ac, animated: true)
     }
 }

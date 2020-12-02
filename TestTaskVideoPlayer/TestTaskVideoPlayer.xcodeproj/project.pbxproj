@@ -14,7 +14,8 @@
 		B042770F25769A6D007D5375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B042770E25769A6D007D5375 /* Assets.xcassets */; };
 		B042771225769A6D007D5375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B042771025769A6D007D5375 /* LaunchScreen.storyboard */; };
 		B04277522576D029007D5375 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04277512576D029007D5375 /* PlayerView.swift */; };
-		B042775925770A29007D5375 /* LastVideo.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = B042775725770A29007D5375 /* LastVideo.xcdatamodeld */; };
+		B0DFA50D2577BD9400A07223 /* LastVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DFA50C2577BD9400A07223 /* LastVideo.swift */; };
+		B0DFA5132577BED400A07223 /* VideoPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DFA5122577BED400A07223 /* VideoPresenter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,7 +28,8 @@
 		B042771125769A6D007D5375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B042771325769A6D007D5375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B04277512576D029007D5375 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
-		B042775825770A29007D5375 /* LastVideo.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = LastVideo.xcdatamodel; sourceTree = "<group>"; };
+		B0DFA50C2577BD9400A07223 /* LastVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastVideo.swift; sourceTree = "<group>"; };
+		B0DFA5122577BED400A07223 /* VideoPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,17 +62,42 @@
 		B042770425769A69007D5375 /* TestTaskVideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				B0DFA51A2577C2AE00A07223 /* Presenters */,
+				B0DFA5182577C27500A07223 /* Views */,
+				B0DFA5172577C26000A07223 /* Models */,
 				B042770525769A69007D5375 /* AppDelegate.swift */,
 				B042770725769A69007D5375 /* SceneDelegate.swift */,
-				B042770925769A69007D5375 /* ViewController.swift */,
-				B042775725770A29007D5375 /* LastVideo.xcdatamodeld */,
-				B04277512576D029007D5375 /* PlayerView.swift */,
 				B042770B25769A69007D5375 /* Main.storyboard */,
 				B042770E25769A6D007D5375 /* Assets.xcassets */,
 				B042771025769A6D007D5375 /* LaunchScreen.storyboard */,
 				B042771325769A6D007D5375 /* Info.plist */,
 			);
 			path = TestTaskVideoPlayer;
+			sourceTree = "<group>";
+		};
+		B0DFA5172577C26000A07223 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B0DFA50C2577BD9400A07223 /* LastVideo.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		B0DFA5182577C27500A07223 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B042770925769A69007D5375 /* ViewController.swift */,
+				B04277512576D029007D5375 /* PlayerView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		B0DFA51A2577C2AE00A07223 /* Presenters */ = {
+			isa = PBXGroup;
+			children = (
+				B0DFA5122577BED400A07223 /* VideoPresenter.swift */,
+			);
+			path = Presenters;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -143,10 +170,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B042775925770A29007D5375 /* LastVideo.xcdatamodeld in Sources */,
 				B042770A25769A69007D5375 /* ViewController.swift in Sources */,
 				B042770625769A69007D5375 /* AppDelegate.swift in Sources */,
+				B0DFA50D2577BD9400A07223 /* LastVideo.swift in Sources */,
 				B04277522576D029007D5375 /* PlayerView.swift in Sources */,
+				B0DFA5132577BED400A07223 /* VideoPresenter.swift in Sources */,
 				B042770825769A69007D5375 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,19 +377,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		B042775725770A29007D5375 /* LastVideo.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				B042775825770A29007D5375 /* LastVideo.xcdatamodel */,
-			);
-			currentVersion = B042775825770A29007D5375 /* LastVideo.xcdatamodel */;
-			path = LastVideo.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = B04276FA25769A69007D5375 /* Project object */;
 }
