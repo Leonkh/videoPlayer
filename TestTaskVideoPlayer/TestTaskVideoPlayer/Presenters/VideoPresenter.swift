@@ -122,6 +122,12 @@ class VideoPresenter {
                 if let time = self.playerView?.time {
                     mainView.playbackSlider.value = Float ( time )
                     mainView.labelCurrentTime.text = self.stringFromTimeInterval(interval: time)
+                    if let duration = playerView.seconds {
+                        if time == duration {
+                            self.isVideoPlaying = false
+                            mainView.changeImagePlayButton(status: self.isVideoPlaying)
+                        }
+                    }
                 }
             }
         }
