@@ -14,6 +14,8 @@
 		B042770F25769A6D007D5375 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B042770E25769A6D007D5375 /* Assets.xcassets */; };
 		B042771225769A6D007D5375 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B042771025769A6D007D5375 /* LaunchScreen.storyboard */; };
 		B04277522576D029007D5375 /* PlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B04277512576D029007D5375 /* PlayerView.swift */; };
+		B057583D2578E1D700C378ED /* Literals.swift in Sources */ = {isa = PBXBuildFile; fileRef = B057583C2578E1D700C378ED /* Literals.swift */; };
+		B05758422578EA9F00C378ED /* RewindView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B05758412578EA9F00C378ED /* RewindView.swift */; };
 		B0DFA50D2577BD9400A07223 /* LastVideo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DFA50C2577BD9400A07223 /* LastVideo.swift */; };
 		B0DFA5132577BED400A07223 /* VideoPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0DFA5122577BED400A07223 /* VideoPresenter.swift */; };
 /* End PBXBuildFile section */
@@ -28,6 +30,8 @@
 		B042771125769A6D007D5375 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		B042771325769A6D007D5375 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B04277512576D029007D5375 /* PlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerView.swift; sourceTree = "<group>"; };
+		B057583C2578E1D700C378ED /* Literals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Literals.swift; sourceTree = "<group>"; };
+		B05758412578EA9F00C378ED /* RewindView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RewindView.swift; sourceTree = "<group>"; };
 		B0DFA50C2577BD9400A07223 /* LastVideo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LastVideo.swift; sourceTree = "<group>"; };
 		B0DFA5122577BED400A07223 /* VideoPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPresenter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -62,17 +66,26 @@
 		B042770425769A69007D5375 /* TestTaskVideoPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				B042770725769A69007D5375 /* SceneDelegate.swift */,
+				B042770525769A69007D5375 /* AppDelegate.swift */,
+				B042771325769A6D007D5375 /* Info.plist */,
+				B057583B2578E17500C378ED /* Resousce */,
 				B0DFA51A2577C2AE00A07223 /* Presenters */,
 				B0DFA5182577C27500A07223 /* Views */,
 				B0DFA5172577C26000A07223 /* Models */,
-				B042770525769A69007D5375 /* AppDelegate.swift */,
-				B042770725769A69007D5375 /* SceneDelegate.swift */,
-				B042770B25769A69007D5375 /* Main.storyboard */,
-				B042770E25769A6D007D5375 /* Assets.xcassets */,
-				B042771025769A6D007D5375 /* LaunchScreen.storyboard */,
-				B042771325769A6D007D5375 /* Info.plist */,
 			);
 			path = TestTaskVideoPlayer;
+			sourceTree = "<group>";
+		};
+		B057583B2578E17500C378ED /* Resousce */ = {
+			isa = PBXGroup;
+			children = (
+				B042770E25769A6D007D5375 /* Assets.xcassets */,
+				B042771025769A6D007D5375 /* LaunchScreen.storyboard */,
+				B042770B25769A69007D5375 /* Main.storyboard */,
+				B057583C2578E1D700C378ED /* Literals.swift */,
+			);
+			path = Resousce;
 			sourceTree = "<group>";
 		};
 		B0DFA5172577C26000A07223 /* Models */ = {
@@ -88,6 +101,7 @@
 			children = (
 				B042770925769A69007D5375 /* ViewController.swift */,
 				B04277512576D029007D5375 /* PlayerView.swift */,
+				B05758412578EA9F00C378ED /* RewindView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -174,8 +188,10 @@
 				B042770625769A69007D5375 /* AppDelegate.swift in Sources */,
 				B0DFA50D2577BD9400A07223 /* LastVideo.swift in Sources */,
 				B04277522576D029007D5375 /* PlayerView.swift in Sources */,
+				B057583D2578E1D700C378ED /* Literals.swift in Sources */,
 				B0DFA5132577BED400A07223 /* VideoPresenter.swift in Sources */,
 				B042770825769A69007D5375 /* SceneDelegate.swift in Sources */,
+				B05758422578EA9F00C378ED /* RewindView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

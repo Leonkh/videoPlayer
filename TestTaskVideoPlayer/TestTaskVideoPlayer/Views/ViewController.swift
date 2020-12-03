@@ -8,8 +8,12 @@ import AVFoundation
 import AVKit
 import UIKit
 
-class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
+protocol ViewControllerDelegate {
+    func forwardRewind()
+    func backwardRewind()
+}
+
+class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, ViewControllerDelegate {
     
     @IBOutlet var playButton: UIButton!
     @IBOutlet var stopButton: UIButton!
@@ -18,14 +22,16 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
     @IBOutlet var playbackSlider: UISlider!
     @IBOutlet var labelOverallDuration: UILabel!
     
-    var myPlayerView: PlayerView!
-    var forwardView: UIView!
-    var backwardView: UIView!
+    let myPlayerView = PlayerView()
+    let rewindView = RewindView()
     
     private let videoPresenter = VideoPresenter()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        rewindView.delegate = self
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addVideo))
         
@@ -48,7 +54,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         setUpMyPlayerView()
         videoPresenter.playerView = myPlayerView
         videoPresenter.mainView = self
-        
         
         let notificationCenter = NotificationCenter.default
         notificationCenter.addObserver(self, selector: #selector(saveData), name: UIApplication.willResignActiveNotification, object: nil)
@@ -85,66 +90,27 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         videoPresenter.stopButtonTapped()
     }
     
-    @objc func forwardViewTapped() {
-        videoPresenter.forwardViewTapped()
-    }
-    
-    @objc func backwardViewTapped() {
-        videoPresenter.backwardViewTapped()
-    }
-    
     func setUpMyPlayerView() {
-        myPlayerView = PlayerView()
         myPlayerView.backgroundColor = .secondarySystemBackground
         view.addSubview(myPlayerView)
-        myPlayerView.alpha = 1
-        myPlayerView.translatesAutoresizingMaskIntoConstraints = false
-        myPlayerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        myPlayerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        myPlayerView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3).isActive = true
-        myPlayerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        myPlayerView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        makeConstraint(view: myPlayerView)
     }
     
-    func setUpMyForwardView() {
-        forwardView = UIView()
-        forwardView.backgroundColor = nil
-        view.addSubview(forwardView)
-        forwardView.alpha = 1
-        forwardView.translatesAutoresizingMaskIntoConstraints = false
-        forwardView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        forwardView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3).isActive = true
-        forwardView.widthAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
-        forwardView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(forwardViewTapped))
-        doubleTap.numberOfTapsRequired = 2
-        forwardView.addGestureRecognizer(doubleTap)
-        
-        let tripleTap = UITapGestureRecognizer(target: self, action: #selector(forwardViewTapped))
-        tripleTap.numberOfTapsRequired = 3
-        forwardView.addGestureRecognizer(tripleTap)
+    func setUpRewindView() {
+        view.addSubview(rewindView)
+        makeConstraint(view: rewindView)
+        rewindView.setUpAll()
     }
     
-    func setUpMyBackwardView() {
-        backwardView = UIView()
-        backwardView.backgroundColor = nil
-        view.addSubview(backwardView)
-        backwardView.alpha = 1
-        backwardView.translatesAutoresizingMaskIntoConstraints = false
-        backwardView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        backwardView.trailingAnchor.constraint(equalTo: forwardView.leadingAnchor).isActive = true
-        backwardView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.3).isActive = true
-        backwardView.widthAnchor.constraint(equalToConstant: view.frame.width / 2).isActive = true
-        backwardView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
-        
-        let doubleTap = UITapGestureRecognizer(target: self, action: #selector(backwardViewTapped))
-        doubleTap.numberOfTapsRequired = 2
-        backwardView.addGestureRecognizer(doubleTap)
-        
-        let tripleTap = UITapGestureRecognizer(target: self, action: #selector(backwardViewTapped))
-        tripleTap.numberOfTapsRequired = 3
-        backwardView.addGestureRecognizer(tripleTap)
+    func makeConstraint(view: UIView) {
+        view.alpha = 1
+        guard let myView = self.view else {return}
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.leadingAnchor.constraint(equalTo: myView.leadingAnchor).isActive = true
+        view.trailingAnchor.constraint(equalTo: myView.trailingAnchor).isActive = true
+        view.heightAnchor.constraint(equalTo: myView.heightAnchor, multiplier: 0.3).isActive = true
+        view.widthAnchor.constraint(equalTo: myView.widthAnchor).isActive = true
+        view.centerYAnchor.constraint(equalTo: myView.centerYAnchor).isActive = true
     }
     
     func setupSliderAndLabels (duration: String, current: String, maxValue: Float, seconds: Float) {
@@ -159,8 +125,6 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         playbackSlider.maximumValue = maxValue
         playbackSlider.isContinuous = true
         playbackSlider.value = seconds
-        
-  
     }
     
     @objc func playbackSliderValueChanged(_ playbackSlider:UISlider) {
@@ -181,5 +145,12 @@ class ViewController: UIViewController, UIImagePickerControllerDelegate, UINavig
         let ac = UIAlertController(title: "First select the video", message: nil, preferredStyle: .alert)
         ac.addAction(UIAlertAction(title: "OK", style: .default))
         present(ac, animated: true)
+    }
+    
+    func forwardRewind() {
+        videoPresenter.forwardViewTapped()
+    }
+    func backwardRewind() {
+        videoPresenter.backwardViewTapped()
     }
 }

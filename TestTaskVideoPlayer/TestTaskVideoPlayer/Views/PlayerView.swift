@@ -10,7 +10,7 @@ import UIKit
 
 class PlayerView: UIView {
     
-    var duration: CMTime?
+    //    var duration: CMTime?
     var seconds: Float64?
     var currentDuration: CMTime?
     var currentSeconds: Float64?
@@ -64,19 +64,19 @@ class PlayerView: UIView {
     }
     
     func forwardByDoubleTouch() {
-        player.seek(to: (player.currentTime()) + CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) + CMTime(seconds: Seconds.rewindSeconds, preferredTimescale: 1))
     }
     
     func forwardByTripleTouch() {
-        player.seek(to: (player.currentTime()) + CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) + CMTime(seconds: Seconds.rewindSeconds * 2, preferredTimescale: 1))
     }
     
     func backwardByDoubleTouch() {
-        player.seek(to: (player.currentTime()) - CMTime(seconds: 10, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) - CMTime(seconds: Seconds.rewindSeconds, preferredTimescale: 1))
     }
     
     func backwardByTripleTouch() {
-        player.seek(to: (player.currentTime()) - CMTime(seconds: 20, preferredTimescale: 1))
+        player.seek(to: (player.currentTime()) - CMTime(seconds: Seconds.rewindSeconds * 2, preferredTimescale: 1))
     }
     
     func changeCurrentTime(seconds: Int64) {

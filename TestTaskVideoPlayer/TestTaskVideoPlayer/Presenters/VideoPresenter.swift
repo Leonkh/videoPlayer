@@ -13,7 +13,6 @@ class VideoPresenter {
     var playerView: PlayerView? = nil
     var mainView: ViewController? = nil
     
-    
     var isVideoPlaying = false
     var isVideoLoaded = false
     
@@ -54,8 +53,7 @@ class VideoPresenter {
         let duration = stringFromTimeInterval(interval: seconds)
         let currentTime = stringFromTimeInterval(interval: current)
         let maxValue = Float(maxSeconds)
-        mainView.setUpMyForwardView()
-        mainView.setUpMyBackwardView()
+        mainView.setUpRewindView()
         mainView.setupSliderAndLabels(duration: duration, current: currentTime, maxValue: maxValue, seconds: Float(current))
         addObserver()
     }
@@ -116,7 +114,7 @@ class VideoPresenter {
     
     func addObserver() {
         guard let playerView = playerView else {return}
-                guard let mainView = mainView else {return}
+        guard let mainView = mainView else {return}
         let cmTime = playerView.CMTimeForObserver()
         playerView.player.addPeriodicTimeObserver(forInterval: cmTime, queue: DispatchQueue.main) { (CMTime) -> Void in
             if playerView.player.currentItem?.status == .readyToPlay {

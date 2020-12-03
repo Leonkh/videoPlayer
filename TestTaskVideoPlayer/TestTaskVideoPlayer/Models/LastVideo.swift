@@ -17,7 +17,6 @@ struct LastVideo: Codable {
             let jsonDecoder = JSONDecoder()
             do {
                 let video = try jsonDecoder.decode(LastVideo.self, from: dataToLoad)
-                print("data was loaded")
                 return video
             } catch {
                 print("Failed to load")
@@ -32,7 +31,6 @@ struct LastVideo: Codable {
         if let dataToSave = try? jsonEncoder.encode(video) {
             let defaults = UserDefaults()
             defaults.setValue(dataToSave, forKey: "lastVideo")
-            print("data was saved")
         } else {
             print("Failed to save data")
         }
